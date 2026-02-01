@@ -1,0 +1,38 @@
+import torch
+import torch.nn.functional as F
+from torch.autograd import grad
+
+class NeuralNetwork(torch.nn.Module):
+    def __init__(self, num_inputs, num_outputs):
+        super().__init__()
+
+        self.layers = torch.nn.Sequential (
+            # 1st hidden layer
+            torch.nn.Linear(num_inputs, 30),
+            torch.nn.ReLU(),
+
+            # 2nd hidden layer
+            torch.nn.Linear(30, 20),
+            torch.nn.ReLU(),
+
+            # Output layer
+            torch.nn.Linear(20, num_outputs),
+        )
+
+    def forward(self, x):
+        # The output of the last layer are called logits
+        logits = self.layers(x)
+        return logits
+    
+model = NeuralNetwork(50, 3)
+print(model)
+
+num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+print("Total number of trainable model parameters:", num_params)
+
+print(model.layers[0].weight)
+
+torch.manual_seed(123)
+X = torch.rand((1, 50))
+out = model(X)
+print(out)
